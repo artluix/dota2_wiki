@@ -1,0 +1,44 @@
+{% extends 'dota_wiki/base.html' %}
+
+{% block content %}
+    {% if sponsorsTournaments %}
+        <table class="center">
+            <tr>
+                <td class="center">
+                    <h2 class="center">List of Sponsors Tournaments</h2>
+                </td>
+                <td>
+                    <a class="btn btn-default" href="{% url 'admin_sponsor_tournament_new' %}">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </td>
+            </tr>
+        </table>
+        <table class="center table">
+            <tr>
+                <th class="center">Sponsor URL</th>
+                <th class="center">Tournament Name</th>
+            </tr>
+            {% for sponsorTournament in sponsorsTournaments %}
+                <tr>
+                    <td class="center">
+                        {{ sponsorTournament.2 }}
+                    </td>
+                    <td class="center">
+                        {{ sponsorTournament.3 }}
+                    </td>
+                    <td>
+                        <a class="btn btn-default" href="{% url 'admin_sponsor_tournament_edit' pk1=sponsorTournament.0 pk2=sponsorTournament.1 %}">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-default" href="{% url 'admin_sponsor_tournament_remove' pk1=sponsorTournament.0 pk2=sponsorTournament.1 %}">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

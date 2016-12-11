@@ -1,0 +1,18 @@
+{% extends 'dota_wiki/base.html' %}
+
+{% block content %}
+    {% if teams %}
+        <h2 class="center">List of teams</h2>
+        <table class="center">
+        {% for team in teams %}
+            <tr>
+                <td class="center">
+                    <p>
+                        <a href="{% url 'team' pk=team.0 %}">{{ team.1 }}</a>
+                    </p>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

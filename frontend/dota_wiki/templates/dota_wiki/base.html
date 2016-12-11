@@ -1,0 +1,51 @@
+{% load staticfiles %}
+
+
+<html>
+    <head>
+        <title>Dota Wiki</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <link rel="stylesheet" href="{% static 'css/dota_wiki.css' %}">
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="page-header">
+            {% if user %}
+                <p class="top-menu">Hello {{ user }}
+                     <small>(<a href="{% url 'logout' %}">Log out</a>)</small>
+                </p>
+                {% block home %}
+                 <p class="top-menu">
+                    <a href="{% url 'index' %}" class="top-menu">Go Home</a>
+                </p>
+                {% endblock %}
+                {% block admin %}
+                    <a href="{% url 'admin' %}" class="top-menu">
+                        <span class="glyphicon glyphicon-star"></span>
+                    </a>
+                {% endblock %}
+            {% else %}
+                {% block login %}
+                    <a href="{% url 'login' %}" class="top-menu">
+                        <span class="glyphicon glyphicon-user"></span>
+                    </a>
+                {% endblock %}
+                {% block register %}
+                    <a href="{% url 'register' %}" class="top-menu">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                {% endblock %}
+            {% endif %}
+            <h1><a href="{% url 'index' %}">Dota Wiki</a></h1>
+        </div>
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

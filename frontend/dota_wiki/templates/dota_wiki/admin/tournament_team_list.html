@@ -1,0 +1,45 @@
+{% extends 'dota_wiki/base.html' %}
+
+
+{% block content %}
+    {% if tournamentsTeams %}
+        <table class="center">
+            <tr>
+                <td class="center">
+                    <h2 class="center">List of Tournaments Teams</h2>
+                </td>
+                <td>
+                    <a class="btn btn-default" href="{% url 'admin_tournament_team_new' %}">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </td>
+            </tr>
+        </table>
+        <table class="center table">
+            <tr>
+                <th class="center">Tournament Name</th>
+                <th class="center">Team Name</th>
+            </tr>
+            {% for tournamentTeam in tournamentsTeams %}
+                <tr>
+                    <td>
+                        {{ tournamentTeam.2 }}
+                    </td>
+                    <td class="center">
+                        {{ tournamentTeam.3 }}
+                    </td>
+                    <td>
+                        <a class="btn btn-default" href="{% url 'admin_tournament_team_edit' pk1=tournamentTeam.0 pk2=tournamentTeam.1 %}">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-default" href="{% url 'admin_tournament_team_remove' pk1=tournamentTeam.0 pk2=tournamentTeam.1 %}">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

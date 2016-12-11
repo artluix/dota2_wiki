@@ -1,0 +1,16 @@
+{% extends 'dota_wiki/base.html' %}
+
+{% block content %}
+    {% if players %}
+        <h2 class="center">List of players</h2>
+        <ul class="list-group">
+        {% for player in players %}
+            <li class="list-group-item center">
+                <span>
+                    <a href="{% url 'player' pk=player.0 %}">{{ player.1 }}</a>
+                </span>
+            </li>
+        {% endfor %}
+    {% endif %}
+    </ul>
+{% endblock %}

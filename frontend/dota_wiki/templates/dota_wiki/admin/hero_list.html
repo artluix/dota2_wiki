@@ -1,0 +1,40 @@
+{% extends 'dota_wiki/base.html' %}
+
+{% block content %}
+    {% if heroes %}
+        <table class="center">
+            <tr>
+                <td class="center">
+                    <h2 class="center">List of Heroes</h2>
+                </td>
+                <td>
+                    <a class="btn btn-default" href="{% url 'admin_hero_new' %}">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </td>
+            </tr>
+        </table>
+        <table class="center table">
+            <tr>
+                <th colspan="3" class="center">Hero Name</th>
+            </tr>
+        {% for hero in heroes %}
+            <tr>
+                <td class="center">
+                    {{ hero.1 }}
+                </td>
+                <td>
+                    <a class="btn btn-default" href="{% url 'admin_hero_edit' pk=hero.0 %}">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </a>
+                </td>
+                <td>
+                    <a class="btn btn-default" href="{% url 'admin_hero_remove' pk=hero.0 %}">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

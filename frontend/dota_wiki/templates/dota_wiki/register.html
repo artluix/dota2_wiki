@@ -1,0 +1,17 @@
+{% extends 'dota_wiki/base.html' %}
+
+{% block register %}
+{% endblock %}
+
+
+{% block content %}
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+     <div class="center">
+        <form method="post" action="{% url 'register' %}">{% csrf_token %}
+           {{ form.as_p}}
+            <input type="submit" class="btn btn-success" value="register" />
+        </form>
+     </div>
+{% endblock %}

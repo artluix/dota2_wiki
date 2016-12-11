@@ -1,0 +1,48 @@
+{% extends 'dota_wiki/base.html' %}
+
+{% block content %}
+    {% if matches %}
+        <table class="center">
+            <tr>
+                <td class="center">
+                    <h2 class="center">List of Matches</h2>
+                </td>
+                <td>
+                    <a class="btn btn-default" href="{% url 'admin_match_new' %}">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </td>
+            </tr>
+        </table>
+        <table class="table center">
+            <tr>
+                <th class="center">Tournament Name</th>
+                <th class="center">First Team Name</th>
+                <th class="center">Second Team Name</th>
+            </tr>
+            {% for match in matches %}
+                <tr>
+                    <td class="center">
+                        {{ match.1 }}
+                    </td>
+                    <td class="center">
+                        {{ match.2 }}
+                    </td>
+                    <td class="center">
+                        {{ match.3 }}
+                    </td>
+                    <td>
+                        <a class="btn btn-default" href="{% url 'admin_match_edit' pk=match.0 %}">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-default" href="{% url 'admin_match_remove' pk=match.0 %}">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

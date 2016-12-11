@@ -1,0 +1,16 @@
+{% extends 'dota_wiki/base.html' %}
+
+{% block content %}
+    {% if tournaments %}
+        <h2 class="center">List of tournaments</h2>
+        <ul class="list-group">
+        {% for tournament in tournaments %}
+            <li class="list-group-item center">
+                <span>
+                    <a href="{% url 'tournament' pk=tournament.0 %}">{{ tournament.1 }}</a>
+                </span>
+            </li>
+        {% endfor %}
+    {% endif %}
+    </ul>
+{% endblock %}

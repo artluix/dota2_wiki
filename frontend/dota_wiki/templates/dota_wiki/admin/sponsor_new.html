@@ -1,0 +1,14 @@
+{% extends 'dota_wiki/base.html' %}
+
+
+{% block content %}
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+    <div class="center">
+        <form method="post" action="{% url 'admin_sponsor_new' %}">{% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-success" value="add" />
+        </form>
+    </div>
+{% endblock %}

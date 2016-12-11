@@ -1,0 +1,51 @@
+{% extends 'dota_wiki/base.html' %}
+
+{% block admin %}
+{% endblock %}
+
+
+{% block content %}
+     <div class="center">
+         <ul class="list-group">
+            <li class="list-group-item">
+                <a href="{% url 'admin_team_list' %}">List of Teams</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_player_list' %}">List of Players</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_tournament_list' %}">List of Tournaments</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_user_list' %}">List of Users</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_role_list' %}">List of Roles</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_hero_list' %}">List of Heroes</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_match_list' %}">List of Matches</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_sponsor_list' %}">List of Sponsors</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_tournament_winner_list' %}">List of TournamentWinners</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_signature_hero_list' %}">List of SignatureHeroes</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_sponsor_tournament_list' %}">List of SponsorsTournaments</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_team_player_list' %}">List of TeamsPlayers</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'admin_tournament_team_list' %}">List of TournamentsTeams</a>
+            </li>
+         </ul>
+    </div>
+{% endblock %}

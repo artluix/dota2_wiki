@@ -1,0 +1,122 @@
+{% extends 'dota_wiki/base.html' %}
+{% load humanize %}
+
+
+{%  block content %}
+    <h2 class="center">{{ shortInfo.0 }}</h2>
+    <div class="all">
+        <div class="left">
+        {% if invitedTeams %}
+            <h3 class="center">Invited Teams</h3>
+            <ul class="list-group">
+            {% for team in invitedTeams %}
+                <li class="list-group-item center">
+                    <span>
+                        <a href="{% url 'team' pk=team.0 %}">{{ team.1 }}</a>
+                    </span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if qualifiedTeams%}
+            <h3 class="center">Qualified Teams</h3>
+            <ul class="list-group">
+            {% for team in qualifiedTeams %}
+                <li class="list-group-item center">
+                    <span>
+                        <a href="{% url 'team' pk=team.0 %}">{{ team.1 }}</a>
+                    </span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if teamWinners %}
+            <h3 class="center">Winners</h3>
+            <table class="list table">
+                <tr>
+                    <th>Place</th>
+                    <th>USD</th>
+                    <th>Team</th>
+                </tr>
+                {% for team in teamWinners %}
+                    <tr>
+                        <td>{{ team.1 }}</td>
+                        <td>${{ team.2 | intcomma }}</td>
+                        <td>
+                                <a href="{% url 'team' pk=team.0 %}">{{ team.3 }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+
+        {% if matches %}
+            <h3 class="center">Matches</h3>
+            <table class="list table">
+                <tr>
+                    <th>Date</th>
+                    <th>Team Name</th>
+                    <th>Score</th>
+                    <th>Team Name</th>
+                </tr>
+                {% for match in matches %}
+                    <tr>
+                        <td class="date">{{ match.2 }}</td>
+                        <td>
+                            <span>
+                                <a href="{% url 'team' pk=match.0 %}">{{ match.3 }}</a>
+                            </span>
+                        </td>
+                        <td>{{ match.4 }} : {{ match.5 }}</td>
+                        <td>
+                            <span>
+                                <a href="{% url 'team' pk=match.1 %}">{{ match.6 }}</a>
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        </div>
+        <div class="right">
+            <h3 class="center">Short Info</h3>
+            <table class="table">
+                <tr>
+                    <td>Format:</td>
+                    <td>{{ shortInfo.1 }}</td>
+                 </tr>
+                <tr>
+                    <td>Type:</td><td>{{ shortInfo.2 }}</td>
+                </tr>
+                <tr>
+                    <td>GameVersion:</td><td>{{ shortInfo.3 }}</td>
+                </tr>
+                <tr>
+                    <td rowspan="2">Date:</td>
+                    <td class="date">{{ shortInfo.4 }}</td>
+                 </tr>
+                <tr>
+                    <td class="date">{{ shortInfo.5 }}</td>
+                </tr>
+                <tr>
+                    <td>Prize Pool:</td><td>${{ shortInfo.6 | intcomma }}</td>
+                </tr>
+            </table>
+            {% if sponsors %}
+                <h4>Sponsors</h4>
+                <ul class="list-group">
+                {% for sponsor in sponsors %}
+                    <li class="list-group-item center">
+                        <span>
+                            <a href="{{ sponsor.0 }}">{{ sponsor.0 }}</a>
+                        </span>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+{%  endblock %}

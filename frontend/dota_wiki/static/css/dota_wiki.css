@@ -1,0 +1,101 @@
+table.list, table.list tr, table.list th, table.list td {
+    text-align: center;
+    border: solid 1px #ddd;
+}
+
+table {
+    width: 100%;
+}
+
+td.center {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+table.center {
+    width: inherit;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+li.center {
+    text-align: center;
+}
+
+html, body {
+    width: 100%;
+}
+
+div.all {
+    width: 100%;
+}
+
+div.left {
+    float: left;
+    width: 70%;
+    margin-left: 40px;
+}
+
+div.right {
+    width: 20%;
+    float: right;
+    margin-right: 20px;
+}
+
+h2.center, h3.center, h4.center {
+    text-align: center;
+}
+
+th.center {
+    text-align: center;
+}
+
+h1.center.error {
+    width: 100%;
+    text-align: center;
+    color: #ff2244;
+}
+
+div.center {
+    text-align: center;
+}
+
+h1 a {
+    color: #FCA205;
+    font-family: 'Trajan Bold';
+}
+
+body {
+    padding-left: 15px;
+}
+
+.page-header {
+    background-color: #40d65d;
+    margin-top: 0;
+    padding: 20px 20px 20px 40px;
+}
+
+.page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
+    color: #ffffff;
+    font-size: 36pt;
+    text-decoration: none;
+}
+
+.content {
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Trajan Bold';
+}
+
+.date {
+    font-family: 'Time';
+}
+
+.top-menu, .top-menu:hover, .top-menu:visited {
+    color: #ffffff;
+    float: right;
+    font-size: 20pt;
+    margin-right: 20px;
+    font-family: "Satisfy";
+}

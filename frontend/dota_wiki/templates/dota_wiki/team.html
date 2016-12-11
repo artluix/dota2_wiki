@@ -1,0 +1,108 @@
+{% extends 'dota_wiki/base.html' %}
+{% load humanize %}
+
+
+{% block content %}
+    <h2 class="center">{{ shortInfo.0 }}</h2>
+    <div class="all">
+        <div class="left">
+            <h3 class="center">Team Current Roster</h3>
+            <table class="list table">
+                <tr>
+                    <th>Country</th>
+                    <th>NickName</th>
+                    <th>Name</th>
+                    <th>Team Role</th>
+                    <th>Join Date</th>
+                </tr>
+                {% for player in currentRoster %}
+                    <tr>
+                        <td>{{ player.1 }}</td>
+                        <td>
+                            <span>
+                                <a href="{% url 'player' pk=player.0 %}">{{ player.2 }}</a>
+                            </span>
+                        </td>
+                        <td>{{ player.3 }}</td>
+                        <td>{{ player.4 }}</td>
+                        <td class="date">{{ player.5 }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            {% if formerPlayers %}
+                <h3 class="center">Former Players</h3>
+                <table class="list table">
+                    <tr>
+                        <th>Country</th>
+                        <th>NickName</th>
+                        <th>Name</th>
+                        <th>Team Role</th>
+                        <th>Join Date</th>
+                        <th>Leave Date</th>
+                    </tr>
+                    {% for player in formerPlayers %}
+                        <tr>
+                            <td>
+                                <span>
+                                    <a href="{% url 'player' pk=player.0 %}">{{ player.1 }}</a>
+                                </span>
+                            </td>
+                            <td>{{ player.2 }}</td>
+                            <td>{{ player.3 }}</td>
+                            <td>{{ player.4 }}</td>
+                            <td class="date">{{ player.5 }}</td>
+                            <td class="date">{{ player.6 }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+
+            {% if achievements %}
+                <h3 class="center">Achievements</h3>
+                <table class="list table">
+                    <tr>
+                        <th>Date</th>
+                        <th>Place</th>
+                        <th>Name</th>
+                        <th>USD</th>
+                    </tr>
+                    {% for tournament in achievements %}
+                        <tr>
+                            <td class="date">{{ tournament.1 }}</td>
+                            <td>{{ tournament.2 }}</td>
+                            <td>
+                                <span>
+                                    <a href="{% url 'tournament' pk=tournament.0 %}">{{ tournament.3 }}</a>
+                                </span>
+                            </td>
+                            <td>${{ tournament.4 | intcomma }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+        <div class="right">
+            <h3 class="center">Short Info</h3>
+            <table class="table">
+                <tr>
+                    <td>Country:</td>
+                    <td>{{ shortInfo.1 }}</td>
+                </tr>
+                <tr>
+                    <td>Winrate:</td><td>{{ shortInfo.2 }}</td>
+                </tr>
+                <tr>
+                    <td>Captain:</td>
+                    <td>
+                        <a href="{% url 'player' pk=shortInfo.3 %}">{{ shortInfo.4 }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Coach:</td>
+                    <td>{{ shortInfo.5 }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}
