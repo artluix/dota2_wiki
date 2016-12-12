@@ -2,8 +2,6 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib.auth.hashers import MD5PasswordHasher
 from django.db.utils import IntegrityError
-from django.http import HttpResponseRedirect
-
 
 from .forms import *
 import cx_Oracle
@@ -92,7 +90,7 @@ def index(request):
 
 def team_list(request):
     if get_access('user'):
-        client_cursor = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR)
+        client_cursor = g_Cursor.callfunc('AllTeamsWithId', cx_Oracle.CURSOR)
         data = client_cursor.fetchall()
         context = {'user': g_UserLogin, 'teams': data}
         return render(request, 'dota_wiki/team_list.html', context)
@@ -102,7 +100,7 @@ def team_list(request):
 
 def player_list(request):
     if get_access('user'):
-        client_cursor = g_Cursor.callfunc('AllPlayers', cx_Oracle.CURSOR)
+        client_cursor = g_Cursor.callfunc('AllPlayersWithId', cx_Oracle.CURSOR)
         data = client_cursor.fetchall()
         context = {'user': g_UserLogin, 'players': data}
         return render(request, 'dota_wiki/player_list.html', context)
@@ -112,7 +110,7 @@ def player_list(request):
 
 def tournament_list(request):
     if get_access('user'):
-        client_cursor = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR)
+        client_cursor = g_Cursor.callfunc('AllTournamentsWithId', cx_Oracle.CURSOR)
         data = client_cursor.fetchall()
         context = {'user': g_UserLogin, 'tournaments': data}
         return render(request, 'dota_wiki/tournament_list.html', context)
@@ -181,7 +179,7 @@ def tournament(request, pk):
 
 def admin_team_list(request):
     if get_access('admin'):
-        client_cursor = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR)
+        client_cursor = g_Cursor.callfunc('AllTeamsWithId', cx_Oracle.CURSOR)
         data = client_cursor.fetchall()
         context = {'user': g_UserLogin, 'teams': data}
         return render(request, 'dota_wiki/admin/team_list.html', context)
@@ -191,7 +189,7 @@ def admin_team_list(request):
 
 def admin_player_list(request):
     if get_access('admin'):
-        client_cursor = g_Cursor.callfunc('AllPlayers', cx_Oracle.CURSOR)
+        client_cursor = g_Cursor.callfunc('AllPlayersWithId', cx_Oracle.CURSOR)
         data = client_cursor.fetchall()
         context = {'user': g_UserLogin, 'players': data}
         return render(request, 'dota_wiki/admin/player_list.html', context)
@@ -201,7 +199,7 @@ def admin_player_list(request):
 
 def admin_tournament_list(request):
     if get_access('admin'):
-        client_cursor = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR)
+        client_cursor = g_Cursor.callfunc('AllTournamentsWithId', cx_Oracle.CURSOR)
         data = client_cursor.fetchall()
         context = {'user': g_UserLogin, 'tournaments': data}
         return render(request, 'dota_wiki/admin/tournament_list.html', context)
@@ -221,7 +219,7 @@ def admin_user_list(request):
 
 def admin_role_list(request):
     if get_access('admin'):
-        client_cursor = g_Cursor.callfunc('AllRoles', cx_Oracle.CURSOR)
+        client_cursor = g_Cursor.callfunc('AllRolesWithId', cx_Oracle.CURSOR)
         data = client_cursor.fetchall()
         context = {'user': g_UserLogin, 'roles': data}
         return render(request, 'dota_wiki/admin/role_list.html', context)
@@ -231,7 +229,7 @@ def admin_role_list(request):
 
 def admin_hero_list(request):
     if get_access('admin'):
-        client_cursor = g_Cursor.callfunc('AllHeroes', cx_Oracle.CURSOR)
+        client_cursor = g_Cursor.callfunc('AllHeroesWithId', cx_Oracle.CURSOR)
         data = client_cursor.fetchall()
         context = {'user': g_UserLogin, 'heroes': data}
         return render(request, 'dota_wiki/admin/hero_list.html', context)
@@ -251,7 +249,7 @@ def admin_match_list(request):
 
 def admin_sponsor_list(request):
     if get_access('admin'):
-        client_cursor = g_Cursor.callfunc('AllSponsors', cx_Oracle.CURSOR)
+        client_cursor = g_Cursor.callfunc('AllSponsorsWithId', cx_Oracle.CURSOR)
         data = client_cursor.fetchall()
         context = {'user': g_UserLogin, 'sponsors': data}
         return render(request, 'dota_wiki/admin/sponsor_list.html', context)
@@ -313,9 +311,11 @@ def admin_tournament_team_list(request):
 # ----------------------------TEAM-----------------------------------------
 def admin_team_new(request):
     if get_access('admin'):
+        players = g_Cursor.callfunc('AllPlayers', cx_Oracle.CURSOR).fetchall()
+        coaches = g_Cursor.callfunc('AllCoaches', cx_Oracle.CURSOR).fetchall()
         error = ''
         if request.method == 'POST':
-            form = TeamForm(request.POST)
+            form = TeamForm(players, coaches, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['name'],
@@ -332,7 +332,7 @@ def admin_team_new(request):
                 if not error:
                     return redirect('admin_team_list')
         else:
-            form = TeamForm()
+            form = TeamForm(players, coaches)
 
         context = {'user': g_UserLogin, 'error': error, 'form': form}
         return render(request, 'dota_wiki/admin/team_new.html', context)
@@ -342,8 +342,10 @@ def admin_team_new(request):
 
 def admin_team_edit(request, pk):
     if get_access('admin'):
+        players = g_Cursor.callfunc('AllPlayers', cx_Oracle.CURSOR).fetchall()
+        coaches = g_Cursor.callfunc('AllCoaches', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = TeamForm(request.POST)
+            form = TeamForm(players, coaches, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['name'],
@@ -362,7 +364,7 @@ def admin_team_edit(request, pk):
             else:
                 return render(request, 'dota_wiki/record_404.html', {})
             
-            form = TeamForm(initial={
+            form = TeamForm(players, coaches, initial={
                 'name': data[0],
                 'captainName': data[1],
                 'location': data[2],
@@ -543,9 +545,10 @@ def admin_tournament_remove(request, pk):
 # ---------------------------------USER--------------------------------------------
 def admin_user_new(request):
     if get_access('admin'):
+        roles = g_Cursor.callfunc('AllRoles', cx_Oracle.CURSOR).fetchall()
         error = ''
         if request.method == 'POST':
-            form = UserForm(request.POST)
+            form = UserForm(roles, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['login'],
@@ -560,7 +563,7 @@ def admin_user_new(request):
                 if not error:
                     return redirect('admin_user_list')
         else:
-            form = UserForm()
+            form = UserForm(roles)
 
         context = {'user': g_UserLogin, 'error': error, 'form': form}
         return render(request, 'dota_wiki/admin/user_new.html', context)
@@ -570,8 +573,9 @@ def admin_user_new(request):
 
 def admin_user_edit(request, pk):
     if get_access('admin'):
+        roles = g_Cursor.callfunc('AllRoles', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = UserForm(request.POST)
+            form = UserForm(roles, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['login'],
@@ -589,7 +593,7 @@ def admin_user_edit(request, pk):
             else:
                 return render(request, 'dota_wiki/record_404.html', {})
 
-            form = UserForm(initial={
+            form = UserForm(roles, initial={
                 'login': data[0],
                 'password': data[1],
                 'roleName': data[2]
@@ -656,7 +660,7 @@ def admin_role_edit(request, pk):
             else:
                 return render(request, 'dota_wiki/record_404.html', {})
             
-            form = UserForm(initial={
+            form = RoleForm(initial={
                 'name': data[0],
                 'priority': data[1]
             })
@@ -736,8 +740,11 @@ def admin_hero_remove(request, pk):
 # --------------------------------------MATCH-------------------------------------------------
 def admin_match_new(request):
     if get_access('admin'):
+        tournaments = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR).fetchall()
+        teams = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR).fetchall()
+
         if request.method == 'POST':
-            form = MatchForm(request.POST)
+            form = MatchForm(tournaments, teams, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['tournamentName'],
@@ -752,7 +759,7 @@ def admin_match_new(request):
 
                 return redirect('admin_match_list')
         else:
-            form = MatchForm()
+            form = MatchForm(tournaments, teams)
 
         context = {'user': g_UserLogin, 'form': form}
         return render(request, 'dota_wiki/admin/match_new.html', context)
@@ -762,8 +769,10 @@ def admin_match_new(request):
 
 def admin_match_edit(request, pk):
     if get_access('admin'):
+        tournaments = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR).fetchall()
+        teams = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = MatchForm(request.POST)
+            form = MatchForm(tournaments, teams, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['tournamentName'],
@@ -785,7 +794,7 @@ def admin_match_edit(request, pk):
             else:
                 return render(request, 'dota_wiki/record_404.html', {})
             
-            form = MatchForm(initial={
+            form = MatchForm(tournaments, teams, initial={
                 'tournamentName': data[0],
                 'firstTeamName': data[1],
                 'secondTeamName': data[2],
@@ -870,8 +879,10 @@ def admin_sponsor_remove(request, pk):
 # --------------------------TOURNAMENT_WINNER------------------------------------------
 def admin_tournament_winner_new(request):
     if get_access('admin'):
+        teams = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR).fetchall()
+        tournaments = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = TournamentWinnerForm(request.POST)
+            form = TournamentWinnerForm(teams, tournaments, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['teamName'],
@@ -884,7 +895,7 @@ def admin_tournament_winner_new(request):
 
                 return redirect('admin_tournament_winner_list')
         else:
-            form = TournamentWinnerForm()
+            form = TournamentWinnerForm(teams, tournaments)
 
         context = {'user': g_UserLogin, 'form': form}
         return render(request, 'dota_wiki/admin/tournament_winner_new.html', context)
@@ -894,8 +905,10 @@ def admin_tournament_winner_new(request):
 
 def admin_tournament_winner_edit(request, pk):
     if get_access('admin'):
+        teams = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR).fetchall()
+        tournaments = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = TournamentWinnerForm(request.POST)
+            form = TournamentWinnerForm(teams, tournaments, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['teamName'],
@@ -915,7 +928,7 @@ def admin_tournament_winner_edit(request, pk):
             else:
                 return render(request, 'dota_wiki/record_404.html', {})
             
-            form = TournamentWinnerForm(initial={
+            form = TournamentWinnerForm(teams, tournaments, initial={
                 'teamName': data[0],
                 'tournamentName': data[1],
                 'winDate': data[2],
@@ -940,8 +953,10 @@ def admin_tournament_winner_remove(request, pk):
 # -----------------------------------SIGNATURE_HERO------------------------------------------
 def admin_signature_hero_new(request):
     if get_access('admin'):
+        players = g_Cursor.callfunc('AllPlayers', cx_Oracle.CURSOR).fetchall()
+        heroes = g_Cursor.callfunc('AllHeroes', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = SignatureHeroForm(request.POST)
+            form = SignatureHeroForm(players, heroes, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['playerName'],
@@ -951,7 +966,7 @@ def admin_signature_hero_new(request):
 
                 return redirect('admin_signature_hero_list')
         else:
-            form = SignatureHeroForm()
+            form = SignatureHeroForm(players, heroes)
 
         context = {'user': g_UserLogin, 'form': form}
         return render(request, 'dota_wiki/admin/signature_hero_new.html', context)
@@ -961,8 +976,10 @@ def admin_signature_hero_new(request):
 
 def admin_signature_hero_edit(request, pk1, pk2):
     if get_access('admin'):
+        players = g_Cursor.callfunc('AllPlayers', cx_Oracle.CURSOR).fetchall()
+        heroes = g_Cursor.callfunc('AllHeroes', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = SignatureHeroForm(request.POST)
+            form = SignatureHeroForm(players, heroes, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['playerName'],
@@ -979,7 +996,7 @@ def admin_signature_hero_edit(request, pk1, pk2):
             else:
                 return render(request, 'dota_wiki/record_404.html', {})
 
-            form = SignatureHeroForm(initial={
+            form = SignatureHeroForm(players, heroes, initial={
                 'playerName': data[0],
                 'heroName': data[1]
             })
@@ -1001,8 +1018,10 @@ def admin_signature_hero_remove(request, pk1, pk2):
 # -----------------------------------SPONSOR_TOURNAMENT---------------------------------
 def admin_sponsor_tournament_new(request):
     if get_access('admin'):
+        sponsors = g_Cursor.callfunc('AllSponsors', cx_Oracle.CURSOR).fetchall()
+        tournaments = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = SponsorTournamentForm(request.POST)
+            form = SponsorTournamentForm(sponsors, tournaments, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['sponsorUrl'],
@@ -1012,7 +1031,7 @@ def admin_sponsor_tournament_new(request):
 
                 return redirect('admin_sponsor_tournament_list')
         else:
-            form = SponsorTournamentForm()
+            form = SponsorTournamentForm(sponsors, tournaments)
 
         context = {'user': g_UserLogin, 'form': form}
         return render(request, 'dota_wiki/admin/sponsor_tournament_new.html', context)
@@ -1022,8 +1041,10 @@ def admin_sponsor_tournament_new(request):
 
 def admin_sponsor_tournament_edit(request, pk1, pk2):
     if get_access('admin'):
+        sponsors = g_Cursor.callfunc('AllSponsors', cx_Oracle.CURSOR).fetchall()
+        tournaments = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = SponsorTournamentForm(request.POST)
+            form = SponsorTournamentForm(sponsors, tournaments, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['sponsorUrl'],
@@ -1040,7 +1061,7 @@ def admin_sponsor_tournament_edit(request, pk1, pk2):
             else:
                 return render(request, 'dota_wiki/record_404.html', {})
 
-            form = SponsorTournamentForm(initial={
+            form = SponsorTournamentForm(sponsors, tournaments, initial={
                 'sponsorUrl': data[0],
                 'tournamentName': data[1]
             })
@@ -1062,8 +1083,10 @@ def admin_sponsor_tournament_remove(request, pk1, pk2):
 # ----------------------------TEAM_PLAYER----------------------------------------
 def admin_team_player_new(request):
     if get_access('admin'):
+        teams = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR).fetchall()
+        players = g_Cursor.callfunc('AllPlayersWithCoaches', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = TeamPlayerForm(request.POST)
+            form = TeamPlayerForm(teams, players, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['teamName'],
@@ -1075,7 +1098,7 @@ def admin_team_player_new(request):
 
                 return redirect('admin_team_player_list')
         else:
-            form = TeamPlayerForm()
+            form = TeamPlayerForm(teams, players)
 
         context = {'user': g_UserLogin, 'form': form}
         return render(request, 'dota_wiki/admin/team_player_new.html', context)
@@ -1085,8 +1108,10 @@ def admin_team_player_new(request):
 
 def admin_team_player_edit(request, pk1, pk2):
     if get_access('admin'):
+        teams = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR).fetchall()
+        players = g_Cursor.callfunc('AllPlayersWithCoaches', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = TeamPlayerForm(request.POST)
+            form = TeamPlayerForm(teams, players, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['teamName'],
@@ -1105,7 +1130,7 @@ def admin_team_player_edit(request, pk1, pk2):
             else:
                 return render(request, 'dota_wiki/record_404.html', {})
             
-            form = TeamPlayerForm(initial={
+            form = TeamPlayerForm(teams, players, initial={
                 'teamName': data[0],
                 'playerName': data[1],
                 'joinDate': data[2],
@@ -1129,8 +1154,10 @@ def admin_team_player_remove(request, pk1, pk2):
 # -------------------------------TOURNAMENT_TEAM--------------------------------
 def admin_tournament_team_new(request):
     if get_access('admin'):
+        tournaments = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR).fetchall()
+        teams = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = TournamentTeamForm(request.POST)
+            form = TournamentTeamForm(tournaments, teams, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['tournamentName'],
@@ -1141,7 +1168,7 @@ def admin_tournament_team_new(request):
 
                 return redirect('admin_tournament_team_list')
         else:
-            form = TournamentTeamForm()
+            form = TournamentTeamForm(tournaments, teams)
 
         context = {'user': g_UserLogin, 'form': form}
         return render(request, 'dota_wiki/admin/tournament_team_new.html', context)
@@ -1151,8 +1178,10 @@ def admin_tournament_team_new(request):
 
 def admin_tournament_team_edit(request, pk1, pk2):
     if get_access('admin'):
+        tournaments = g_Cursor.callfunc('AllTournaments', cx_Oracle.CURSOR).fetchall()
+        teams = g_Cursor.callfunc('AllTeams', cx_Oracle.CURSOR).fetchall()
         if request.method == 'POST':
-            form = TournamentTeamForm(request.POST)
+            form = TournamentTeamForm(tournaments, teams, request.POST)
             if form.is_valid():
                 params = [
                     form.cleaned_data['tournamentName'],
@@ -1170,7 +1199,7 @@ def admin_tournament_team_edit(request, pk1, pk2):
             else:
                 return render(request, 'dota_wiki/record_404.html', {})
             
-            form = TournamentTeamForm(initial={
+            form = TournamentTeamForm(tournaments, teams, initial={
                 'tournamentName': data[0],
                 'teamName': data[1],
                 'isInvited': data[2]

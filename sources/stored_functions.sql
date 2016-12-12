@@ -378,7 +378,7 @@ end;
 
 
 -- START PAGE
-create or replace function AllTeams return sys_refcursor
+create or replace function AllTeamsWithId return sys_refcursor
 is
     o_RC1 sys_refcursor;
 begin
@@ -390,7 +390,19 @@ begin
 end;
 /
 
-create or replace function AllPlayers return sys_refcursor
+create or replace function AllTeams return sys_refcursor
+is
+    o_RC1 sys_refcursor;
+begin
+    open o_RC1 for 
+        select name 
+        from Teams;
+
+    return o_RC1;
+end;
+/
+
+create or replace function AllPlayersWithId return sys_refcursor
 is
     o_RC1 sys_refcursor;
 begin
@@ -402,13 +414,62 @@ begin
 end;
 /
 
+create or replace function AllPlayers return sys_refcursor
+is
+    o_RC1 sys_refcursor;
+begin
+    open o_RC1 for 
+        select nickName 
+        from Players
+        where Players.position != 6;
+
+    return o_RC1;
+end;
+/
+
+create or replace function AllCoaches return sys_refcursor
+is
+    o_RC1 sys_refcursor;
+begin
+    open o_RC1 for 
+        select nickName 
+        from Players
+        where Players.position = 6;
+
+    return o_RC1;
+end;
+/
+
+create or replace function AllPlayersWithCoaches return sys_refcursor
+is
+    o_RC1 sys_refcursor;
+begin
+    open o_RC1 for 
+        select nickName 
+        from Players;
+
+    return o_RC1;
+end;
+/
+
+create or replace function AllTournamentsWithId return sys_refcursor
+is
+    o_RC1 sys_refcursor;
+begin
+    open o_RC1 for 
+        select id, name 
+        from Tournaments;
+
+    return o_RC1;
+end;
+/
 
 create or replace function AllTournaments return sys_refcursor
 is
     o_RC1 sys_refcursor;
 begin
     open o_RC1 for 
-        select id, name 
+        select name 
         from Tournaments;
 
     return o_RC1;
@@ -428,7 +489,7 @@ begin
 end;
 /
 
-create or replace function AllRoles return sys_refcursor
+create or replace function AllRolesWithId return sys_refcursor
 is
     o_RC1 sys_refcursor;
 begin
@@ -440,12 +501,36 @@ begin
 end;
 /
 
-create or replace function AllHeroes return sys_refcursor
+create or replace function AllRoles return sys_refcursor
+is
+    o_RC1 sys_refcursor;
+begin
+    open o_RC1 for 
+        select name
+        from Roles;
+
+    return o_RC1;
+end;
+/
+
+create or replace function AllHeroesWithId return sys_refcursor
 is
     o_RC1 sys_refcursor;
 begin
     open o_RC1 for 
         select id, name 
+        from Heroes;
+
+    return o_RC1;
+end;
+/
+
+create or replace function AllHeroes return sys_refcursor
+is
+    o_RC1 sys_refcursor;
+begin
+    open o_RC1 for 
+        select name 
         from Heroes;
 
     return o_RC1;
@@ -473,12 +558,24 @@ begin
 end;
 /
 
-create or replace function AllSponsors return sys_refcursor
+create or replace function AllSponsorsWithId return sys_refcursor
 is
     o_RC1 sys_refcursor;
 begin
     open o_RC1 for
         select id, url
+        from Sponsors;
+
+    return o_RC1;
+end;
+/
+
+create or replace function AllSponsors return sys_refcursor
+is
+    o_RC1 sys_refcursor;
+begin
+    open o_RC1 for
+        select url
         from Sponsors;
 
     return o_RC1;

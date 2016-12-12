@@ -21,11 +21,11 @@
             </tr>
             {% for winner in tournamentWinners %}
                 <tr>
-                    <td>
-                        {{ winner.2 }}
+                    <td class="center">
+                        {{ winner.1 }}
                     </td>
                     <td class="center">
-                        {{ winner.3 }}
+                        {{ winner.2 }}
                     </td>
                     <td>
                         <a class="btn btn-default" href="{% url 'admin_tournament_winner_edit' pk=winner.0 %}">
